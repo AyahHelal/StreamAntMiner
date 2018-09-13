@@ -241,6 +241,25 @@ public abstract class Rule implements Comparable<Rule> {
 
 	return covered;
     }
+    
+
+	public boolean coversInstance(Dataset dataset, double[] instance) {
+		boolean covered = true;
+
+		for (int i = 0; i < size; i++) {
+		    if (terms[i].isEnabeld()) {
+			Condition condition = terms[i].condition();
+			double v = instance[condition.attribute];
+
+			if (!condition.satisfies(v)) {
+			    covered = false;
+			    break;
+			}
+		    }
+		}
+
+		return covered;
+	}
 
     /**
      * Returns the number of terms in the antecedent of the rule.
@@ -523,4 +542,5 @@ public abstract class Rule implements Comparable<Rule> {
 	    this.enabeld = enabeld;
 	}
     }
+
 }

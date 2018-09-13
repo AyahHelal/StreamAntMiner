@@ -197,6 +197,27 @@ public class RuleList  implements Model, Comparable<RuleList> {
 	throw new IllegalArgumentException("Could not classify instance: "
 		+ instance);
     }
+    
+    /**
+     * Returns the predicted class value of the specified instance.
+     * 
+     * @param dataset
+     *            the current dataset.
+     * @param instance
+     *            the instance values.
+     * 
+     * @return the predicted class value of the specified instance.
+     */
+	public Prediction predictInstance(Dataset dataset, double[] instance) {
+		for (int i = 0; i < rules.length; i++) {
+		    if (rules[i].isEnabled() && rules[i].coversInstance(dataset, instance)) {
+			return rules[i].getConsequent();
+		    }
+		}
+
+		throw new IllegalArgumentException("Could not classify instance: "
+			+ instance);
+	}
 
     /**
      * Returns the string representation of the rule list.
@@ -280,4 +301,5 @@ public class RuleList  implements Model, Comparable<RuleList> {
 
 	return c;
     }
+
 }

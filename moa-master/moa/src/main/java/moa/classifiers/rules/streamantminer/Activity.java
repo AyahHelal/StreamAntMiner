@@ -20,7 +20,7 @@ public interface Activity<T extends Comparable<T>> {
      * 
      * @return the created solution.
      */
-    public T create(Dataset dataset);
+    public T create();
 
     /**
      * Applies local search to the candidate solutions. More generally, local

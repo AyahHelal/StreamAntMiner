@@ -96,7 +96,7 @@ public class ArchiveFindRuleListActivity extends IterativeActivity<RuleList> {
     }
 
     @Override
-    public RuleList create(Dataset dataset) {
+    public RuleList create() {
     this.dataset = dataset;
 	Instance[] instances = Instance.newArray(dataset.size());
 	Instance.markAll(instances, NOT_COVERED);
@@ -183,4 +183,8 @@ public class ArchiveFindRuleListActivity extends IterativeActivity<RuleList> {
 	super.update(archive);
 	policy.update(graph, archive.highest());
     }
+
+	public void setDataset(Dataset dataset2) {
+		this.dataset = dataset2;
+	}
 }

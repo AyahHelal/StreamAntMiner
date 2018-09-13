@@ -355,6 +355,16 @@ public class Dataset {
 
 	return size();
     }
+    
+    /**
+     * Removes all instances in the dataset.
+     */
+    public void removeInstances() {
+    	instances = new double[0];
+    	distribution = new double[0];
+    }
+
+    
 
     /**
      * Returns the index of the majority class.
@@ -740,4 +750,5 @@ public class Dataset {
 	    }
 	}
     }
+
 }

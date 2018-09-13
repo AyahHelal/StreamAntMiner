@@ -1,9 +1,15 @@
 package moa.classifiers.rules.streamantminer;
 
+
+
 import java.util.Random;
 
 import moa.classifiers.rules.streamantminer.Archive.DefaultArchive;
+import moa.classifiers.rules.streamantminer.Config.ConfigKey;
+import moa.classifiers.rules.streamantminer.VariableArchive;
 
+import static moa.classifiers.rules.streamantminer.Config.CONFIG;
+import static moa.classifiers.rules.streamantminer.sAntMinerClassifier.RANDOM_GENERATOR;
 
 
 /**
@@ -17,29 +23,40 @@ public abstract class VariableArchive<E extends Number & Comparable<E>>
 	implements Cloneable {
   
 
-   /**
-    * Default value for the weight calculation parameter <i>q</i>.
-    */
-   public  double DEFAULT_Q = 0.05099;
-   
-   public  Random RANDOM_GENERATOR = new Random();
-   
+	 /**
+     * The config key for the archive size.
+     */
+    public static final ConfigKey<Integer> ARCHIVE_SIZE = new ConfigKey<>();
 
-   /**
-    * Default value for the weight calculation parameter <i>q</i>.
-    */
-   public double DEFAULT_CONVERGENCE_SPEED = 0.6795;
+    /**
+     * The config key for the weight calculation parameter <i>q</i>.
+     */
+    public static final ConfigKey<Double> Q = new ConfigKey<>();
 
-   /**
-    * Default value for the weight calculation parameter <i>q</i>.
-    */
-   public int ARCHIVE_SIZE = 5;
+    /**
+     * Default value for the weight calculation parameter <i>q</i>.
+     */
+    public static final double DEFAULT_Q = 0.05099;
 
-   /**
-    * Default value for the precision parameter.
-    */
-   public double DEFAULT_PRECISION = 2;
+    /**
+     * The config key for the convergence speed parameter.
+     */
+    public static final ConfigKey<Double> CONVERGENCE_SPEED = new ConfigKey<>();
 
+    /**
+     * Default value for the weight calculation parameter <i>q</i>.
+     */
+    public static final double DEFAULT_CONVERGENCE_SPEED = 0.6795;
+
+    /**
+     * The config key for the precision parameter.
+     */
+    public static final ConfigKey<Double> PRECISION = new ConfigKey<>();
+
+    /**
+     * Default value for the precision parameter.
+     */
+    public static final double DEFAULT_PRECISION = 2;
    /**
     * Returns an attribute condition sampled using an
     * <code>ACO<sub>MV</sub></code> strategy. Note that
@@ -72,11 +89,11 @@ public abstract class VariableArchive<E extends Number & Comparable<E>>
     *            the solution archive.
     */
    private void update(DefaultArchive<? extends Entry<E>> archive) {
-	double q = DEFAULT_Q;
-	double k = ARCHIVE_SIZE;
+	  double q = CONFIG.get(Q);
+	double k = CONFIG.get(ARCHIVE_SIZE);
 	Object[] solutions = archive.solutions();
 
-	for (int i = 0; i < solutions.length; i++) {
+	for (int i = 0; i < archive.size() ; i++) {
 	    Entry<?> c = (Entry<?>) solutions[i];
 
 	    double exp = -Math.pow((i + 1) - 1, 2) / (2 * q * q * k * k);
@@ -119,9 +136,9 @@ public abstract class VariableArchive<E extends Number & Comparable<E>>
 	    this.lower = lower;
 	    this.upper = upper;
 
-	    precision = (int) Math.pow(10, DEFAULT_PRECISION);
+	    precision = (int) Math.pow(10, CONFIG.get(PRECISION));
 	    archive =
-		    new DefaultArchive<Entry<Double>>(ARCHIVE_SIZE);
+		    new DefaultArchive<Entry<Double>>(CONFIG.get(ARCHIVE_SIZE));
 	}
 
 	@Override
@@ -134,8 +151,8 @@ public abstract class VariableArchive<E extends Number & Comparable<E>>
 	    double sampled = 0.0;
 
 	    if (!archive.isFull()) {
-		sampled = (RANDOM_GENERATOR.nextDouble()
-			* (upper - lower)) + lower;
+	    	sampled = (CONFIG.get(RANDOM_GENERATOR).nextDouble()
+	    			* (upper - lower)) + lower;
 	    } else {
 		// roulette selection based on the weight of each value
 
@@ -149,7 +166,7 @@ public abstract class VariableArchive<E extends Number & Comparable<E>>
 		}
 
 		int selected = (probabilities.length - 1);
-		double slot = RANDOM_GENERATOR.nextDouble();
+		double slot = CONFIG.get(RANDOM_GENERATOR).nextDouble();
 		double cumulative = 0.0;
 
 		for (int i = 0; i < probabilities.length; i++) {
@@ -196,7 +213,7 @@ public abstract class VariableArchive<E extends Number & Comparable<E>>
 	    deviation = DEFAULT_CONVERGENCE_SPEED
 		    * (deviation / (solutions.length - 1));
 
-	    return (RANDOM_GENERATOR.nextGaussian() * deviation)
+	    return (CONFIG.get(RANDOM_GENERATOR).nextGaussian() * deviation)
 		    + ((Entry<Double>) solutions[selected]).value;
 	}
 
@@ -229,7 +246,7 @@ public abstract class VariableArchive<E extends Number & Comparable<E>>
 	 */
 	public Categorical(int length) {
 	    this.length = length;
-	    archive = new DefaultArchive<Entry<Integer>>(ARCHIVE_SIZE);
+	    archive = new DefaultArchive<Entry<Integer>>(CONFIG.get(ARCHIVE_SIZE));
 	}
 
 	@Override
@@ -241,7 +258,7 @@ public abstract class VariableArchive<E extends Number & Comparable<E>>
 	public Integer sample() {
 	    if (!archive.isFull()) {
 		// random sampling, since archive is not complete
-		return RANDOM_GENERATOR.nextInt(length);
+		return CONFIG.get(RANDOM_GENERATOR).nextInt(length);
 	    } else {
 		double[] probabilities = new double[length];
 		Comparable<Entry<Integer>>[] solutions = archive.solutions();
@@ -290,7 +307,7 @@ public abstract class VariableArchive<E extends Number & Comparable<E>>
 		// roulette selection based on the weight of each value
 
 		int value = (length - 1);
-		double slot = RANDOM_GENERATOR.nextDouble();
+		double slot = CONFIG.get(RANDOM_GENERATOR).nextDouble();
 		double cumulative = 0.0;
 
 		for (int i = 0; i < length; i++) {
