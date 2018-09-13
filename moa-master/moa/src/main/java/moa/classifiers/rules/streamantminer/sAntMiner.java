@@ -19,6 +19,7 @@ public class sAntMiner extends AbstractMOAObject {
 	
 	RuleList Model;
 	
+	Scheduler<RuleList> scheduler;
 	
 	public void Initialise(Instance inst)
 	{
@@ -43,6 +44,9 @@ public class sAntMiner extends AbstractMOAObject {
 			}
 		}
 		activity = new ArchiveFindRuleListActivity(new Graph(dataset), dataset);
+		scheduler = Scheduler.newInstance(1);
+		scheduler.setActivity(activity);
+		scheduler.initialise();
 	}
 	
 	public double[] vote(Instance inst)
@@ -72,17 +76,15 @@ public class sAntMiner extends AbstractMOAObject {
 	}
 	
 	public void train(Instance inst)
-	{
-		
+	{		
 		if(dataset.size() < CONFIG.get(BUFFER_SIZE))
 		{
 			dataset.add(inst.toDoubleArray());
+			
 		}
 		else
 		{
 			activity.setDataset(dataset);
-			Scheduler<RuleList> scheduler = Scheduler.newInstance(1);
-			scheduler.setActivity(activity);
 			scheduler.run();
 			Model = activity.getBest();
 			dataset.removeInstances();

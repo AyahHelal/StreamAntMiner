@@ -93,11 +93,12 @@ public class ArchiveFindRuleListActivity extends IterativeActivity<RuleList> {
 	this.dataset = dataset;
 	this.factory = factory;
 	this.policy = policy;
+	policy.initialise(graph);
     }
 
     @Override
     public RuleList create() {
-    this.dataset = dataset;
+
 	Instance[] instances = Instance.newArray(dataset.size());
 	Instance.markAll(instances, NOT_COVERED);
 	
@@ -152,7 +153,8 @@ public class ArchiveFindRuleListActivity extends IterativeActivity<RuleList> {
     @Override
     public void initialise() {
 	super.initialise();
-	policy.initialise(graph);
+	if(globalBest!= null)
+		globalBest.setQuality(CONFIG.get(DEFAULT_MEASURE).evaluate(dataset, globalBest));
 
 	reset = true;
 
@@ -186,5 +188,9 @@ public class ArchiveFindRuleListActivity extends IterativeActivity<RuleList> {
 
 	public void setDataset(Dataset dataset2) {
 		this.dataset = dataset2;
+	}
+	
+	public void setGlobalbestaccuracy() {
+		
 	}
 }

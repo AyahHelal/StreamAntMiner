@@ -40,7 +40,8 @@ public abstract class IterativeActivity<T extends Comparable<T>> extends Abstrac
 	public void initialise() {
 		iteration = 0;
 		stagnation = 0;
-		globalBest = null;
+		//globalBest = null;
+		
 	}
 
 	/**

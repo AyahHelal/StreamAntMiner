@@ -78,12 +78,12 @@ public class sAntMinerClassifier extends AbstractClassifier {
 		CONFIG.set(Q, 0.05099);
 		CONFIG.set(CONVERGENCE_SPEED, 0.6795);
 		CONFIG.set(PRECISION, 2.0);
-		CONFIG.set(MAX_ITERATIONS, 200);
-		CONFIG.set(MINIMUM_CASES, 2);
+		CONFIG.set(MAX_ITERATIONS, 50);
+		CONFIG.set(MINIMUM_CASES, 5);
 		CONFIG.set(EVAPORATION_FACTOR, 0.9);
 		CONFIG.set(DEFAULT_MEASURE, new PessimisticAccuracy());
 		CONFIG.set(UNCOVERED, 0.001);
-		CONFIG.set(STAGNATION, 25);
+		CONFIG.set(STAGNATION, 5);
 		CONFIG.set(DEFAULT_PRUNER, new SinglePassPruner());
 		CONFIG.set(DEFAULT_LIST_PRUNER, new ListPruner.None());
 		CONFIG.set(DEFAULT_FUNCTION, new SensitivitySpecificity());

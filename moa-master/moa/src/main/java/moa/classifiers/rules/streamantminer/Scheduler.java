@@ -145,21 +145,6 @@ public class Scheduler<T extends Comparable<T>> {
     }
     
     /**
-     * Runs the scheduler.
-     */
-    public void runWithoutinitialise() {
-
-
-	while (!terminate()) {
-	    create();
-
-	    search();
-
-	    update();
-	}
-    }
-
-    /**
      * Performs the initialisation of the activity.
      */
     protected void initialise() {
