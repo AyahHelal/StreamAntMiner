@@ -108,7 +108,8 @@ public class ArchiveRuleFactory {
 	}
 
 	rule.compact();
-
+	Instance[] clone = Instance.copyOf(instances);
+	rule.apply(dataset, clone);
 	return rule;
     }
 }

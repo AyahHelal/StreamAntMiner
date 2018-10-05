@@ -10,21 +10,38 @@ import static moa.classifiers.rules.streamantminer.Dataset.NOT_COVERED;
 import static moa.classifiers.rules.streamantminer.sAntMinerClassifier.BUFFER_SIZE;
 import static moa.classifiers.rules.streamantminer.sAntMinerClassifier.RANDOM_GENERATOR;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static moa.classifiers.rules.streamantminer.sAntMinerClassifier.BUFFER_TRIGGER;
+
+
 public class sAntMiner extends AbstractMOAObject {
 	
+	
+
 	Dataset dataset;
 	
 	int buffersize;
 	ArchiveFindRuleListActivity activity;
 	
 	RuleList Model;
-	
+	boolean full;
+	int counter;
 	Scheduler<RuleList> scheduler;
-	
+	int[] classes;
+	ArrayList<Integer> rulescounts;
+	ArrayList<Double> termscount;
+	double[] votes;
+
 	public void Initialise(Instance inst)
 	{
+		counter = 0;
+		rulescounts = new ArrayList<Integer>();
+		termscount = new ArrayList<Double>();
 		dataset = new Dataset();
-		for(int i=0;i < inst.numAttributes();i++)
+		classes = new int[inst.numClasses()];
+		for(int i = 0 ; i < inst.numAttributes() ; i++)
 		{
 			if(inst.attribute(i).isNominal())
 			{
@@ -51,7 +68,7 @@ public class sAntMiner extends AbstractMOAObject {
 	
 	public double[] vote(Instance inst)
 	{
-		double[] votes = new double[inst.classAttribute().numValues()];
+		votes = new double[inst.classAttribute().numValues()];
 		if(Model != null)
 		{
 			Label label = (Label) Model.predictInstance(dataset,inst.toDoubleArray());
@@ -68,7 +85,7 @@ public class sAntMiner extends AbstractMOAObject {
 			}
 			else
 			{
-				int length = dataset.classLength();
+				int length = dataset.classLength(); 
 				votes[CONFIG.get(RANDOM_GENERATOR).nextInt(length)]++;
 			}
 		}
@@ -76,19 +93,49 @@ public class sAntMiner extends AbstractMOAObject {
 	}
 	
 	public void train(Instance inst)
-	{		
-		if(dataset.size() < CONFIG.get(BUFFER_SIZE))
+	{	
+		boolean dotrigger = triggerAnt();
+		if(dataset.size() < CONFIG.get(BUFFER_SIZE) && dotrigger)
 		{
 			dataset.add(inst.toDoubleArray());
-			
+			updateClassesCounter(inst);
+		
 		}
 		else
 		{
-			activity.setDataset(dataset);
+			
+			dataset.add(inst.toDoubleArray());
+			activity.setActivity(dataset,Model);
 			scheduler.run();
-			Model = activity.getBest();
+			Model = activity.getBest();			
 			dataset.removeInstances();
+			classes = new int[dataset.classLength()];
+			counter++;
+			rulescounts.add(Model.size());
+			termscount.add(Model.termscount());
 		}
+	}
+
+	
+	private boolean triggerAnt() {
+		
+		for(int i=0 ; i < dataset.classLength(); i++)
+		{
+			if(classes[i] > (CONFIG.get(BUFFER_TRIGGER)*CONFIG.get(BUFFER_SIZE)))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private void updateClassesCounter(Instance inst) {
+
+		if(votes[(int)inst.classValue()] == 0)
+		{
+			classes[(int)inst.classValue()]++;
+		}
+		
 	}
 
 	@Override
@@ -96,4 +143,36 @@ public class sAntMiner extends AbstractMOAObject {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public String export() {
+		
+		return Model.export(dataset);
+	}
+
+	public double averageRuleSize() {
+		double x = rulescounts.size();
+		double avg = 0;
+		for(int i=0; i < rulescounts.size();i++)
+		{
+			avg += rulescounts.get(i);
+		}
+		
+		return (double) avg/x;
+	}
+
+	public double averageTermSize() {
+		double x = termscount.size();
+		double avg = 0;
+		for(int i=0; i < termscount.size();i++)
+		{
+			avg += termscount.get(i);
+		}
+		
+		return (double) avg/x;
+	}
+
+	public double averageTriggers() {
+		return counter;
+	}
+
 }

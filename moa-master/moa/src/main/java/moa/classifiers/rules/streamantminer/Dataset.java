@@ -323,11 +323,11 @@ public class Dataset {
 	for (int removed : indexes) {
 	    if (attributes[classIndex()].getType() == NOMINAL) {
 		// updates the class frequency
-		distribution[(int) value(removed * attributes.length,
+		distribution[(int) value(removed,
 					 classIndex())]--;
 	    } else if (attributes[classIndex()].getType() == CONTINUOUS) {
 		// updates the mean
-		mean -= distribution[(int) value(removed * attributes.length,
+		mean -= distribution[(int) value(removed,
 						 classIndex())];
 	    }
 
@@ -360,8 +360,9 @@ public class Dataset {
      * Removes all instances in the dataset.
      */
     public void removeInstances() {
+    	//remove(new int[]{0}); 
     	instances = new double[0];
-    	distribution = new double[0];
+    	//distribution = new double[0];
     }
 
     

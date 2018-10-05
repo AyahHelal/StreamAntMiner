@@ -318,6 +318,30 @@ public final class Attribute implements Cloneable {
 	 * condition.
 	 */
 	public double[] frequency;
+	
+	/**
+	 * The number of true positive classified examples satisfying the
+	 * condition.
+	 */
+	public int TP;
+	
+	/**
+	 * The number of true negative classified examples satisfying the
+	 * condition.
+	 */
+	public int TN;
+	
+	/**
+	 * The number of false positive classified examples satisfying the
+	 * condition.
+	 */
+	public int FP;
+	
+	/**
+	 * The number of false negative classified examples satisfying the
+	 * condition.
+	 */
+	public int FN;
 
 	/**
 	 * The number of different class values occuring in the examples
@@ -340,6 +364,12 @@ public final class Attribute implements Cloneable {
 	 * The weight of the condition.
 	 */
 	public double weight = 0;
+	
+	
+	public void qualityCalculated()
+	{
+		quality =  (TP/ (double)(TP + FN)) * (TN / (double)(TN + FP));
+	}
 
 	/**
 	 * Returns <code>true</code> if the specified value satisfies this

@@ -154,10 +154,14 @@ public class ArchiveFindRuleListActivity extends IterativeActivity<RuleList> {
     public void initialise() {
 	super.initialise();
 	if(globalBest!= null)
+	{
 		globalBest.setQuality(CONFIG.get(DEFAULT_MEASURE).evaluate(dataset, globalBest));
-
-	reset = true;
-
+		policy.update(graph, globalBest);
+	}
+	else
+	{
+		reset = true;
+	}
 	// (initial) heuristic of the whole dataset
 
 	Instance[] instances = Instance.newArray(dataset.size());
@@ -167,15 +171,15 @@ public class ArchiveFindRuleListActivity extends IterativeActivity<RuleList> {
 
     @Override
     public boolean terminate() {
-	if (stagnation > CONFIG.get(STAGNATION)) {
-	    if (reset) {
-		policy.initialise(graph);
-		stagnation = 0;
-		reset = false;
-	    } else {
-		return true;
-	    }
-	}
+//	if (stagnation > CONFIG.get(STAGNATION)) {
+//	    if (reset) {
+//		policy.initialise(graph);
+//		stagnation = 0;
+//		reset = false;
+//	    } else {
+//		return true;
+//	    }
+//	}
 
 	return super.terminate();
     }
@@ -186,8 +190,9 @@ public class ArchiveFindRuleListActivity extends IterativeActivity<RuleList> {
 	policy.update(graph, archive.highest());
     }
 
-	public void setDataset(Dataset dataset2) {
+	public void setActivity(Dataset dataset2,RuleList Model) {
 		this.dataset = dataset2;
+		this.globalBest = Model;
 	}
 	
 	public void setGlobalbestaccuracy() {

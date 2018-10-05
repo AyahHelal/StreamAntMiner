@@ -475,6 +475,7 @@ public abstract class Rule implements Comparable<Rule> {
 	 */
 	private boolean enabeld;
 
+	
 	/**
 	 * Creates a <code>Term</code>.
 	 * 

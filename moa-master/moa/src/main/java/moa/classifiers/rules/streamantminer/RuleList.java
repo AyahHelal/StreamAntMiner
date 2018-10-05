@@ -6,6 +6,7 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import moa.classifiers.rules.streamantminer.Dataset.Instance;
+import moa.classifiers.rules.streamantminer.Rule.Term;
 
 
 
@@ -60,6 +61,19 @@ public class RuleList  implements Model, Comparable<RuleList> {
      */
     public final int size() {
 	return rules.length;
+    }
+    
+    /**
+     * Returns avg number of terms.
+     * 
+     * @return the number of rules.
+     */
+    public final double termscount() {
+    	double sum = 0;
+    	for (int i = 0; i < rules.length; i++) {
+    		sum += rules[i].terms().length;
+    	}
+    	return (double)(sum/rules.length);
     }
 
     /**
@@ -301,5 +315,13 @@ public class RuleList  implements Model, Comparable<RuleList> {
 
 	return c;
     }
+
+			
+		
+	
+	
+
+
+	
 
 }
