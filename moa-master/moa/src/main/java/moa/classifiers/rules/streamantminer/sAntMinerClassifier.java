@@ -77,6 +77,17 @@ public class sAntMinerClassifier extends AbstractClassifier {
 			"The precentage of the buffer filled with one miss classified instance ",
 			0.20);
 	
+	public IntOption minimumcases = new IntOption(
+			"MinimumCasesOption",
+			'm',
+			"Minimum amount of cases",
+			5);
+	public FloatOption uncovered = new FloatOption(
+			"FloatOptionOption",
+			'u',
+			"Minimum amount of cases uncovered",
+			0.01);
+	
 	
 	private static final long serialVersionUID = 1L;
 	public final static ConfigKey<Random> RANDOM_GENERATOR = new ConfigKey<>();
@@ -124,10 +135,10 @@ public class sAntMinerClassifier extends AbstractClassifier {
 		CONFIG.set(CONVERGENCE_SPEED, convergenceOption.getValue());
 		CONFIG.set(PRECISION, 2.0);
 		CONFIG.set(MAX_ITERATIONS, itrationsOption.getValue());
-		CONFIG.set(MINIMUM_CASES,5);
+		CONFIG.set(MINIMUM_CASES,minimumcases.getValue());
 		CONFIG.set(EVAPORATION_FACTOR, 0.9);
 		CONFIG.set(DEFAULT_MEASURE, new PessimisticAccuracy());
-		CONFIG.set(UNCOVERED, 0.01);
+		CONFIG.set(UNCOVERED, uncovered.getValue());
 		CONFIG.set(STAGNATION, 2);
 		CONFIG.set(DEFAULT_PRUNER, new SinglePassPruner());
 		CONFIG.set(DEFAULT_LIST_PRUNER, new ListPruner.None());

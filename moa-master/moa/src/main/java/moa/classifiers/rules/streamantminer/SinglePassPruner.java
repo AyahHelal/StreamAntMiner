@@ -37,28 +37,47 @@ public class SinglePassPruner extends Pruner {
 
 	// (1) determines the coverage of each term
 
-	for (int i = 0; i < dataset.size(); i++) {
-	    // only considers instances not covered
-	    if (instances[i].flag != COVERED) {
-		int c = (int) dataset.value(i, dataset.classIndex());
+		int start = 0;
 
-		for (int j = 0; j < terms.length; j++) {
-		    if (terms[j].isEnabeld()) {
-			Condition condition = terms[j].condition();
-			double v = dataset.value(i, condition.attribute);
+		while (start < coverage.length) {
+		    for (int i = 0; i < dataset.size(); i++) {
+			// only considers instances not covered
+			if (instances[i].flag != COVERED) {
+			    int c = (int) dataset.value(i, dataset.classIndex());
 
-			if (condition.satisfies(v)) {
-			    coverage[j].covered[c]++;
-			} else {
-			    coverage[j].uncovered[c]++;
-			    // stops checking the remaining terms
-			    break;
+			    for (int j = start; j < terms.length; j++) {
+				if (terms[j].isEnabeld()) {
+				    Condition condition = terms[j].condition();
+				    double v = dataset.value(i, condition.attribute);
+
+				    if (condition.satisfies(v)) {
+					coverage[j].covered[c]++;
+				    } else {
+					coverage[j].uncovered[c]++;
+					// stops checking the remaining terms
+					break;
+				    }
+				}
+			    }
 			}
 		    }
-		}
-	    }
-	}
 
+		    // checks that the first term of the rule cover the minimum number
+		    // of cases,
+		    // otherwise disables it and repeat the coverage of the rule
+		    if (coverage[start].total() < CONFIG.get(MINIMUM_CASES)) {
+			terms[start].setEnabeld(false);
+			start++;
+			// reset coverage for all terms
+			for (int j = 0; j < coverage.length; j++) {
+			    coverage[j] = new Coverage(dataset.classLength());
+			}
+		    } else {
+			// when the rule covers the minimum number of cases, stop the
+			// coverage test
+			break;
+		    }
+		}
 	// (2) determines the quality of each term
 
 	Assignator assignator = CONFIG.get(ASSIGNATOR);
